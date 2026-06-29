@@ -121,9 +121,10 @@
   <section id="menu" style="background:var(--crudo-2);padding:clamp(72px,12vh,130px) clamp(20px,5vw,70px);position:relative;">
     <style>
       /* Radio inputs invisibles — controlan el estado de los tabs via CSS */
-      .tg-rd{position:absolute;opacity:0;pointer-events:none;width:0;height:0;}
+      .tg-rd{position:absolute;opacity:0;width:0;height:0;left:-9999px;}
       /* Etiqueta de tab */
       .tg-lbl{font-family:'Mulish',sans-serif;font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--carbon);opacity:.4;padding:12px 0;margin-right:clamp(18px,2.8vw,36px);border-bottom:2px solid transparent;cursor:pointer;display:inline-block;transition:opacity .18s,border-color .18s;white-space:nowrap;}
+      .tg-lbl.tg-active{opacity:1;border-bottom-color:var(--accent);}
       /* Panel oculto por defecto */
       .tg-panel{display:none;}
       /* Panel activo y tab activo segun radio checked */
@@ -515,6 +516,33 @@ class Component extends DCLogic {
     };
   }
 }
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabs = {
+      des: { input: document.getElementById('rd-des'), panel: document.querySelector('.tg-panel-des') },
+      com: { input: document.getElementById('rd-com'), panel: document.querySelector('.tg-panel-com') },
+      beb: { input: document.getElementById('rd-beb'), panel: document.querySelector('.tg-panel-beb') },
+    };
+    const labels = document.querySelectorAll('.tg-lbl[for^="rd-"]');
+    if (!tabs.des.input || !tabs.des.panel || labels.length === 0) return;
+
+    const setActiveTab = (key) => {
+      Object.entries(tabs).forEach(([name, { input, panel }]) => {
+        if (input) input.checked = name === key;
+        if (panel) panel.style.display = name === key ? 'block' : 'none';
+      });
+      labels.forEach((label) => {
+        label.classList.toggle('tg-active', label.htmlFor === `rd-${key}`);
+      });
+    };
+
+    labels.forEach((label) => {
+      label.addEventListener('click', () => setActiveTab(label.htmlFor.replace('rd-', '')));
+    });
+
+    setActiveTab('des');
+  });
 </script>
 </body>
 </html>
