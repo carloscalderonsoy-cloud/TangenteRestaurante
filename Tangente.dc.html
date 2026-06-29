@@ -120,12 +120,9 @@
   <!-- ============ MENU ============ -->
   <section id="menu" style="background:var(--crudo-2);padding:clamp(72px,12vh,130px) clamp(20px,5vw,70px);position:relative;">
     <style>
-      /* Radio inputs invisibles — controlan el estado de los tabs via CSS */
-      .tg-rd{position:absolute;opacity:0;width:0;height:0;left:-9999px;}
       /* Etiqueta de tab */
       .tg-lbl{font-family:'Mulish',sans-serif;font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--carbon);opacity:.4;padding:12px 0;margin-right:clamp(18px,2.8vw,36px);border-bottom:2px solid transparent;cursor:pointer;display:inline-block;transition:opacity .18s,border-color .18s;white-space:nowrap;background:none;border:none;}
       .tg-lbl.tg-active{opacity:1;border-bottom-color:var(--accent);}
-      /* Panel oculto por defecto */
       .tg-panel{display:none;}
       .tg-panel.tg-active{display:block;}
       .tg-mcard{background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 28px rgba(31,29,27,.08);display:flex;flex-direction:column;}
@@ -134,11 +131,6 @@
       @media(max-width:520px){.tg-mgrid{grid-template-columns:1fr;}}
     </style>
 
-    <!-- Inputs de radio — deben ser hermanos del contenedor .tg-mc para que funcione el selector CSS ~ -->
-    <input class="tg-rd" type="radio" name="tg-tab" id="rd-des" checked>
-    <input class="tg-rd" type="radio" name="tg-tab" id="rd-com">
-    <input class="tg-rd" type="radio" name="tg-tab" id="rd-beb">
-
     <div class="tg-mc" style="max-width:1320px;margin:0 auto;">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:clamp(22px,3.5vh,36px);">
         <span style="display:block;width:46px;height:1px;background:var(--carbon);opacity:.4;"></span>
@@ -146,11 +138,11 @@
       </div>
       <h2 style="margin:0 0 clamp(28px,4.5vh,48px);font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(32px,5vw,64px);letter-spacing:-.01em;color:var(--carbon);">Lo que m&aacute;s se antoja</h2>
 
-      <!-- Tabs nav — labels conectados a los radio inputs -->
+      <!-- Tabs nav — botones de tab explicitos -->
       <div style="border-bottom:1.5px solid rgba(31,29,27,.12);margin-bottom:clamp(36px,6vh,56px);overflow-x:auto;">
-        <button type="button" class="tg-lbl tg-active" data-tab="des" onclick="tangenteTab('des')">Desayunos</button>
-        <button type="button" class="tg-lbl" data-tab="com" onclick="tangenteTab('com')">Comida &amp; Cena</button>
-        <button type="button" class="tg-lbl" data-tab="beb" onclick="tangenteTab('beb')">Bebidas</button>
+        <button type="button" class="tg-lbl tg-tab-btn tg-active" data-tab="des" style="background:none;border:none;">Desayunos</button>
+        <button type="button" class="tg-lbl tg-tab-btn" data-tab="com" style="background:none;border:none;">Comida &amp; Cena</button>
+        <button type="button" class="tg-lbl tg-tab-btn" data-tab="beb" style="background:none;border:none;">Bebidas</button>
       </div>
 
       <!-- DESAYUNOS panel -->
@@ -481,6 +473,39 @@
 
 </div>
 </x-dc>
+<script>
+  (function() {
+    function setActiveTab(tab) {
+      const buttons = Array.from(document.querySelectorAll('.tg-tab-btn'));
+      const panels = {
+        des: document.querySelector('.tg-panel-des'),
+        com: document.querySelector('.tg-panel-com'),
+        beb: document.querySelector('.tg-panel-beb')
+      };
+      if (!buttons.length || !panels.des || !panels.com || !panels.beb) return;
+      buttons.forEach((button) => {
+        button.classList.toggle('tg-active', button.dataset.tab === tab);
+      });
+      Object.entries(panels).forEach(([key, panel]) => {
+        panel.classList.toggle('tg-active', key === tab);
+      });
+    }
+
+    function handleMenuClick(event) {
+      const button = event.target.closest('.tg-tab-btn');
+      if (!button) return;
+      event.preventDefault();
+      const tab = button.dataset.tab;
+      if (!tab) return;
+      setActiveTab(tab);
+    }
+
+    document.addEventListener('click', handleMenuClick);
+    document.addEventListener('DOMContentLoaded', () => setActiveTab('des'));
+    window.addEventListener('load', () => setActiveTab('des'));
+    setTimeout(() => setActiveTab('des'), 250);
+  })();
+</script>
 <script type="text/x-dc" data-dc-script data-props="{
   &quot;accent&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;dorado&quot;, &quot;terracota&quot;, &quot;oliva&quot;], &quot;default&quot;: &quot;dorado&quot;, &quot;tsType&quot;: &quot;string&quot; },
   &quot;scrimStrength&quot;: { &quot;editor&quot;: &quot;float&quot;, &quot;default&quot;: 0.55, &quot;min&quot;: 0, &quot;max&quot;: 0.9, &quot;step&quot;: 0.05, &quot;tsType&quot;: &quot;number&quot; },
@@ -514,30 +539,6 @@ class Component extends DCLogic {
     };
   }
 }
-</script>
-<script>
-  function tangenteTab(key) {
-    const menu = document.getElementById('menu');
-    if (!menu) return;
-    const buttons = Array.from(menu.querySelectorAll('.tg-lbl[data-tab]'));
-    const panels = {
-      des: menu.querySelector('.tg-panel-des'),
-      com: menu.querySelector('.tg-panel-com'),
-      beb: menu.querySelector('.tg-panel-beb'),
-    };
-    buttons.forEach((button) => {
-      button.classList.toggle('tg-active', button.dataset.tab === key);
-    });
-    Object.entries(panels).forEach(([name, panel]) => {
-      if (panel) panel.classList.toggle('tg-active', name === key);
-    });
-  }
-
-  if (document.readyState !== 'loading') {
-    tangenteTab('des');
-  } else {
-    document.addEventListener('DOMContentLoaded', () => tangenteTab('des'));
-  }
 </script>
 </body>
 </html>
