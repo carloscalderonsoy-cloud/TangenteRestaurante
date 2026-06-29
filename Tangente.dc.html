@@ -123,17 +123,11 @@
       /* Radio inputs invisibles — controlan el estado de los tabs via CSS */
       .tg-rd{position:absolute;opacity:0;width:0;height:0;left:-9999px;}
       /* Etiqueta de tab */
-      .tg-lbl{font-family:'Mulish',sans-serif;font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--carbon);opacity:.4;padding:12px 0;margin-right:clamp(18px,2.8vw,36px);border-bottom:2px solid transparent;cursor:pointer;display:inline-block;transition:opacity .18s,border-color .18s;white-space:nowrap;}
+      .tg-lbl{font-family:'Mulish',sans-serif;font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--carbon);opacity:.4;padding:12px 0;margin-right:clamp(18px,2.8vw,36px);border-bottom:2px solid transparent;cursor:pointer;display:inline-block;transition:opacity .18s,border-color .18s;white-space:nowrap;background:none;border:none;}
       .tg-lbl.tg-active{opacity:1;border-bottom-color:var(--accent);}
       /* Panel oculto por defecto */
       .tg-panel{display:none;}
-      /* Panel activo y tab activo segun radio checked */
-      #rd-des:checked ~ .tg-mc .tg-panel-des,
-      #rd-com:checked ~ .tg-mc .tg-panel-com,
-      #rd-beb:checked ~ .tg-mc .tg-panel-beb{display:block;}
-      #rd-des:checked ~ .tg-mc label[for="rd-des"],
-      #rd-com:checked ~ .tg-mc label[for="rd-com"],
-      #rd-beb:checked ~ .tg-mc label[for="rd-beb"]{opacity:1;border-bottom-color:var(--accent);}
+      .tg-panel.tg-active{display:block;}
       .tg-mcard{background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 28px rgba(31,29,27,.08);display:flex;flex-direction:column;}
       .tg-mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,26px);}
       @media(max-width:860px){.tg-mgrid{grid-template-columns:repeat(2,1fr);}}
@@ -154,13 +148,13 @@
 
       <!-- Tabs nav — labels conectados a los radio inputs -->
       <div style="border-bottom:1.5px solid rgba(31,29,27,.12);margin-bottom:clamp(36px,6vh,56px);overflow-x:auto;">
-        <button type="button" class="tg-lbl" data-tab="des">Desayunos</button>
+        <button type="button" class="tg-lbl tg-active" data-tab="des">Desayunos</button>
         <button type="button" class="tg-lbl" data-tab="com">Comida &amp; Cena</button>
         <button type="button" class="tg-lbl" data-tab="beb">Bebidas</button>
       </div>
 
       <!-- DESAYUNOS panel -->
-      <div class="tg-panel tg-panel-des">
+      <div class="tg-panel tg-panel-des tg-active">
         <div class="tg-mgrid">
 
           <div class="tg-mcard">
@@ -523,54 +517,30 @@ class Component extends DCLogic {
 </script>
 <script>
   (function () {
-    const getTabs = () => ({
-      des: { input: document.getElementById('rd-des'), panel: document.querySelector('.tg-panel-des') },
-      com: { input: document.getElementById('rd-com'), panel: document.querySelector('.tg-panel-com') },
-      beb: { input: document.getElementById('rd-beb'), panel: document.querySelector('.tg-panel-beb') },
-    });
+    const buttons = Array.from(document.querySelectorAll('.tg-lbl[data-tab]'));
+    const panels = {
+      des: document.querySelector('.tg-panel-des'),
+      com: document.querySelector('.tg-panel-com'),
+      beb: document.querySelector('.tg-panel-beb'),
+    };
 
-    const initTabs = () => {
-      const tabs = getTabs();
-      const buttons = Array.from(document.querySelectorAll('.tg-lbl[data-tab]'));
-      if (!tabs.des.panel || !tabs.com.panel || !tabs.beb.panel || buttons.length < 3) return false;
+    if (buttons.length < 3 || !panels.des || !panels.com || !panels.beb) return;
 
-      const setActiveTab = (key) => {
-        Object.entries(tabs).forEach(([name, { input, panel }]) => {
-          if (input) input.checked = name === key;
-          if (panel) panel.style.display = name === key ? 'block' : 'none';
-        });
-        buttons.forEach((button) => {
-          button.classList.toggle('tg-active', button.dataset.tab === key);
-        });
-      };
-
+    const setActive = (key) => {
       buttons.forEach((button) => {
-        button.addEventListener('click', () => {
-          setActiveTab(button.dataset.tab);
-        });
+        button.classList.toggle('tg-active', button.dataset.tab === key);
       });
-
-      setActiveTab('des');
-      return true;
+      Object.entries(panels).forEach(([name, panel]) => {
+        panel.classList.toggle('tg-active', name === key);
+      });
     };
 
-    const whenReady = (fn) => {
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', fn);
-      } else {
-        fn();
-      }
-    };
-
-    whenReady(() => {
-      if (!initTabs()) {
-        const observer = new MutationObserver(() => {
-          if (initTabs()) observer.disconnect();
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-      }
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        setActive(button.dataset.tab);
+      });
     });
-  })();
-</script>
+
+    setActive('des');
 </body>
 </html>
