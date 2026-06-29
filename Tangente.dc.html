@@ -118,32 +118,48 @@
   </section>
 
   <!-- ============ MENU ============ -->
-  <section id="menu" style="background:var(--crudo-2);padding:clamp(72px,12vh,130px) clamp(20px,5vw,70px);">
+  <section id="menu" style="background:var(--crudo-2);padding:clamp(72px,12vh,130px) clamp(20px,5vw,70px);position:relative;">
     <style>
-      .tg-mtab{font-family:'Mulish',sans-serif;font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;background:none;border:none;border-bottom:2px solid transparent;color:var(--carbon);opacity:.4;padding:12px 0;margin-right:clamp(18px,2.8vw,36px);cursor:pointer;transition:opacity .18s,border-color .18s;white-space:nowrap;}
-      .tg-mtab.tg-active{opacity:1;border-bottom-color:var(--accent);}
+      /* Radio inputs invisibles — controlan el estado de los tabs via CSS */
+      .tg-rd{position:absolute;opacity:0;pointer-events:none;width:0;height:0;}
+      /* Etiqueta de tab */
+      .tg-lbl{font-family:'Mulish',sans-serif;font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--carbon);opacity:.4;padding:12px 0;margin-right:clamp(18px,2.8vw,36px);border-bottom:2px solid transparent;cursor:pointer;display:inline-block;transition:opacity .18s,border-color .18s;white-space:nowrap;}
+      /* Panel oculto por defecto */
+      .tg-panel{display:none;}
+      /* Panel activo y tab activo segun radio checked */
+      #rd-des:checked ~ .tg-mc .tg-panel-des,
+      #rd-com:checked ~ .tg-mc .tg-panel-com,
+      #rd-beb:checked ~ .tg-mc .tg-panel-beb{display:block;}
+      #rd-des:checked ~ .tg-mc label[for="rd-des"],
+      #rd-com:checked ~ .tg-mc label[for="rd-com"],
+      #rd-beb:checked ~ .tg-mc label[for="rd-beb"]{opacity:1;border-bottom-color:var(--accent);}
       .tg-mcard{background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 28px rgba(31,29,27,.08);display:flex;flex-direction:column;}
       .tg-mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,2vw,26px);}
       @media(max-width:860px){.tg-mgrid{grid-template-columns:repeat(2,1fr);}}
       @media(max-width:520px){.tg-mgrid{grid-template-columns:1fr;}}
     </style>
 
-    <div style="max-width:1320px;margin:0 auto;">
+    <!-- Inputs de radio — deben ser hermanos del contenedor .tg-mc para que funcione el selector CSS ~ -->
+    <input class="tg-rd" type="radio" name="tg-tab" id="rd-des" checked>
+    <input class="tg-rd" type="radio" name="tg-tab" id="rd-com">
+    <input class="tg-rd" type="radio" name="tg-tab" id="rd-beb">
+
+    <div class="tg-mc" style="max-width:1320px;margin:0 auto;">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:clamp(22px,3.5vh,36px);">
         <span style="display:block;width:46px;height:1px;background:var(--carbon);opacity:.4;"></span>
         <span style="font-family:'Mulish',sans-serif;font-size:12px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--carbon);opacity:.62;">Men&uacute;</span>
       </div>
       <h2 style="margin:0 0 clamp(28px,4.5vh,48px);font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(32px,5vw,64px);letter-spacing:-.01em;color:var(--carbon);">Lo que m&aacute;s se antoja</h2>
 
-      <!-- Tabs nav -->
+      <!-- Tabs nav — labels conectados a los radio inputs -->
       <div style="border-bottom:1.5px solid rgba(31,29,27,.12);margin-bottom:clamp(36px,6vh,56px);overflow-x:auto;">
-        <button class="{{ tabDesCls }}" onclick="{{ setTabDes }}">Desayunos</button>
-        <button class="{{ tabComCls }}" onclick="{{ setTabCom }}">Comida &amp; Cena</button>
-        <button class="{{ tabBebCls }}" onclick="{{ setTabBeb }}">Bebidas</button>
+        <label for="rd-des" class="tg-lbl">Desayunos</label>
+        <label for="rd-com" class="tg-lbl">Comida &amp; Cena</label>
+        <label for="rd-beb" class="tg-lbl">Bebidas</label>
       </div>
 
       <!-- DESAYUNOS panel -->
-      <sc-if value="{{ showDes }}">
+      <div class="tg-panel tg-panel-des">
         <div class="tg-mgrid">
 
           <div class="tg-mcard">
@@ -188,10 +204,10 @@
 
         </div>
         <p style="margin:22px 0 0;font-family:'Mulish',sans-serif;font-size:12.5px;color:var(--carbon);opacity:.45;letter-spacing:.06em;">Disponibles de 8:00 AM a 2:00 PM &nbsp;&middot;&nbsp; Men&uacute; completo en sucursal</p>
-      </sc-if>
+      </div>
 
       <!-- COMIDA-CENA panel -->
-      <sc-if value="{{ showCom }}">
+      <div class="tg-panel tg-panel-com">
         <div class="tg-mgrid">
 
           <div class="tg-mcard">
@@ -237,10 +253,10 @@
 
         </div>
         <p style="margin:22px 0 0;font-family:'Mulish',sans-serif;font-size:12.5px;color:var(--carbon);opacity:.45;letter-spacing:.06em;">Pizza-burgers especiales de 2:00 PM al cierre &nbsp;&middot;&nbsp; Men&uacute; completo en sucursal</p>
-      </sc-if>
+      </div>
 
       <!-- BEBIDAS panel -->
-      <sc-if value="{{ showBeb }}">
+      <div class="tg-panel tg-panel-beb">
         <div class="tg-mgrid">
 
           <div class="tg-mcard">
@@ -285,7 +301,7 @@
 
         </div>
         <p style="margin:22px 0 0;font-family:'Mulish',sans-serif;font-size:12.5px;color:var(--carbon);opacity:.45;letter-spacing:.06em;">Mixolog&iacute;a de autor &nbsp;&middot;&nbsp; Cervezas &nbsp;&middot;&nbsp; Vinos &nbsp;&middot;&nbsp; Destilados &nbsp;&middot;&nbsp; Carta completa en sucursal</p>
-      </sc-if>
+      </div>
 
     </div>
   </section>
