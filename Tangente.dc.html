@@ -137,13 +137,13 @@
 
       <!-- Tabs nav -->
       <div style="border-bottom:1.5px solid rgba(31,29,27,.12);margin-bottom:clamp(36px,6vh,56px);overflow-x:auto;">
-        <button class="tg-mtab tg-active" data-mtab="des">Desayunos</button>
-        <button class="tg-mtab" data-mtab="com">Comida &amp; Cena</button>
-        <button class="tg-mtab" data-mtab="beb">Bebidas</button>
+        <button class="{{ tabDesCls }}" onclick="{{ setTabDes }}">Desayunos</button>
+        <button class="{{ tabComCls }}" onclick="{{ setTabCom }}">Comida &amp; Cena</button>
+        <button class="{{ tabBebCls }}" onclick="{{ setTabBeb }}">Bebidas</button>
       </div>
 
       <!-- DESAYUNOS panel -->
-      <div data-mpanel="des">
+      <sc-if value="{{ showDes }}">
         <div class="tg-mgrid">
 
           <div class="tg-mcard">
@@ -188,10 +188,10 @@
 
         </div>
         <p style="margin:22px 0 0;font-family:'Mulish',sans-serif;font-size:12.5px;color:var(--carbon);opacity:.45;letter-spacing:.06em;">Disponibles de 8:00 AM a 2:00 PM &nbsp;&middot;&nbsp; Men&uacute; completo en sucursal</p>
-      </div>
+      </sc-if>
 
       <!-- COMIDA-CENA panel -->
-      <div data-mpanel="com" hidden>
+      <sc-if value="{{ showCom }}">
         <div class="tg-mgrid">
 
           <div class="tg-mcard">
@@ -237,10 +237,10 @@
 
         </div>
         <p style="margin:22px 0 0;font-family:'Mulish',sans-serif;font-size:12.5px;color:var(--carbon);opacity:.45;letter-spacing:.06em;">Pizza-burgers especiales de 2:00 PM al cierre &nbsp;&middot;&nbsp; Men&uacute; completo en sucursal</p>
-      </div>
+      </sc-if>
 
       <!-- BEBIDAS panel -->
-      <div data-mpanel="beb" hidden>
+      <sc-if value="{{ showBeb }}">
         <div class="tg-mgrid">
 
           <div class="tg-mcard">
@@ -285,24 +285,9 @@
 
         </div>
         <p style="margin:22px 0 0;font-family:'Mulish',sans-serif;font-size:12.5px;color:var(--carbon);opacity:.45;letter-spacing:.06em;">Mixolog&iacute;a de autor &nbsp;&middot;&nbsp; Cervezas &nbsp;&middot;&nbsp; Vinos &nbsp;&middot;&nbsp; Destilados &nbsp;&middot;&nbsp; Carta completa en sucursal</p>
-      </div>
+      </sc-if>
 
     </div>
-
-    <script>
-    (function(){
-      var btns=document.querySelectorAll('[data-mtab]');
-      btns.forEach(function(b){
-        b.addEventListener('click',function(){
-          btns.forEach(function(x){x.classList.remove('tg-active');});
-          b.classList.add('tg-active');
-          document.querySelectorAll('[data-mpanel]').forEach(function(p){
-            p.hidden=p.dataset.mpanel!==b.dataset.mtab;
-          });
-        });
-      });
-    })();
-    </script>
   </section>
 
   <!-- ============ DIFERENCIADORES ============ -->
@@ -497,8 +482,21 @@ class Component extends DCLogic {
     const s = this.props.scrimStrength;
     if (typeof s === 'number') root.style.setProperty('--scrim', String(s));
   }
+  _setTab(tab) { this.setState({ activeTab: tab }); }
   renderVals() {
-    return { showScrollCue: this.props.showScrollCue !== false };
+    const t = this.state.activeTab || 'des';
+    return {
+      showScrollCue: this.props.showScrollCue !== false,
+      tabDesCls: t === 'des' ? 'tg-mtab tg-active' : 'tg-mtab',
+      tabComCls: t === 'com' ? 'tg-mtab tg-active' : 'tg-mtab',
+      tabBebCls: t === 'beb' ? 'tg-mtab tg-active' : 'tg-mtab',
+      showDes: t === 'des',
+      showCom: t === 'com',
+      showBeb: t === 'beb',
+      setTabDes: () => this._setTab('des'),
+      setTabCom: () => this._setTab('com'),
+      setTabBeb: () => this._setTab('beb'),
+    };
   }
 }
 </script>
