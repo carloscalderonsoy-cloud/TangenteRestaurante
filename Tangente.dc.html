@@ -43,7 +43,7 @@
     <nav style="display:flex;align-items:center;gap:clamp(16px,2.4vw,34px);font-family:'Mulish',sans-serif;font-size:13px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;">
       <a href="#menu" style="text-decoration:none;color:var(--crudo);opacity:.92;text-shadow:0 1px 10px rgba(0,0,0,.4);">Menú</a>
       <a href="#sucursales" style="text-decoration:none;color:var(--crudo);opacity:.92;text-shadow:0 1px 10px rgba(0,0,0,.4);">Sucursales</a>
-      <a href="https://instagram.com/tangentegdl" target="_blank" rel="noopener" style="text-decoration:none;color:var(--carbon);background:var(--crudo);padding:9px 16px;border-radius:40px;letter-spacing:.1em;display:inline-flex;align-items:center;gap:6px;">@tangentegdl</a>
+      <a href="https://www.instagram.com/tangenterest/" target="_blank" rel="noopener" style="text-decoration:none;color:var(--carbon);background:var(--crudo);padding:9px 16px;border-radius:40px;letter-spacing:.1em;display:inline-flex;align-items:center;gap:6px;">@tangenterest</a>
     </nav>
   </header>
 
@@ -154,9 +154,9 @@
 
       <!-- Tabs nav — labels conectados a los radio inputs -->
       <div style="border-bottom:1.5px solid rgba(31,29,27,.12);margin-bottom:clamp(36px,6vh,56px);overflow-x:auto;">
-        <label for="rd-des" class="tg-lbl">Desayunos</label>
-        <label for="rd-com" class="tg-lbl">Comida &amp; Cena</label>
-        <label for="rd-beb" class="tg-lbl">Bebidas</label>
+        <button type="button" class="tg-lbl" data-tab="des">Desayunos</button>
+        <button type="button" class="tg-lbl" data-tab="com">Comida &amp; Cena</button>
+        <button type="button" class="tg-lbl" data-tab="beb">Bebidas</button>
       </div>
 
       <!-- DESAYUNOS panel -->
@@ -432,8 +432,8 @@
             <h3 style="margin:0;font-family:'Jost',sans-serif;font-weight:300;font-size:22px;color:var(--crudo);">Tangente Virreyes</h3>
           </div>
           <p style="margin:0;font-family:'Mulish',sans-serif;font-size:14px;line-height:1.68;color:var(--crudo);opacity:.56;flex:1;">Pronto en Guadalajara.<br>S&iacute;guenos en Instagram para conocer la fecha.</p>
-          <a href="https://instagram.com/tangentegdl" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;font-family:'Mulish',sans-serif;font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dorado);">
-            @tangentegdl
+          <a href="https://www.instagram.com/tangenterest/" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;gap:7px;font-family:'Mulish',sans-serif;font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dorado);">
+            @tangenterest
           </a>
         </div>
 
@@ -449,7 +449,11 @@
         <div style="flex:1 1 260px;min-width:220px;">
           <a href="#hero" style="text-decoration:none;display:block;font-family:'Jost',sans-serif;font-weight:300;font-size:21px;letter-spacing:.42em;color:var(--crudo);margin-bottom:14px;">TANGENTE</a>
           <p style="margin:0 0 26px;font-family:'Parisienne',cursive;font-size:20px;line-height:1.4;color:var(--dorado);">La vida es como una tangente&hellip;</p>
-          <a href="https://instagram.com/tangentegdl" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-family:'Mulish',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--crudo);border:1.3px solid rgba(242,239,234,.22);padding:10px 18px;border-radius:40px;">Instagram &nbsp;@tangentegdl</a>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="https://www.instagram.com/tangenterest/" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-family:'Mulish',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--crudo);border:1.3px solid rgba(242,239,234,.22);padding:10px 18px;border-radius:40px;">Instagram &nbsp;@tangenterest</a>
+            <a href="https://www.facebook.com/tangenterestaurante" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-family:'Mulish',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--crudo);border:1.3px solid rgba(242,239,234,.22);padding:10px 18px;border-radius:40px;">Facebook &nbsp;/ TangenteRestaurante</a>
+            <a href="https://www.tiktok.com/@tangentegdl" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-family:'Mulish',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--crudo);border:1.3px solid rgba(242,239,234,.22);padding:10px 18px;border-radius:40px;">TikTok &nbsp;/ @tangentegdl</a>
+          </div>
         </div>
 
         <div style="flex:1 1 160px;min-width:140px;">
@@ -518,31 +522,55 @@ class Component extends DCLogic {
 }
 </script>
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const tabs = {
+  (function () {
+    const getTabs = () => ({
       des: { input: document.getElementById('rd-des'), panel: document.querySelector('.tg-panel-des') },
       com: { input: document.getElementById('rd-com'), panel: document.querySelector('.tg-panel-com') },
       beb: { input: document.getElementById('rd-beb'), panel: document.querySelector('.tg-panel-beb') },
-    };
-    const labels = document.querySelectorAll('.tg-lbl[for^="rd-"]');
-    if (!tabs.des.input || !tabs.des.panel || labels.length === 0) return;
-
-    const setActiveTab = (key) => {
-      Object.entries(tabs).forEach(([name, { input, panel }]) => {
-        if (input) input.checked = name === key;
-        if (panel) panel.style.display = name === key ? 'block' : 'none';
-      });
-      labels.forEach((label) => {
-        label.classList.toggle('tg-active', label.htmlFor === `rd-${key}`);
-      });
-    };
-
-    labels.forEach((label) => {
-      label.addEventListener('click', () => setActiveTab(label.htmlFor.replace('rd-', '')));
     });
 
-    setActiveTab('des');
-  });
+    const initTabs = () => {
+      const tabs = getTabs();
+      const buttons = Array.from(document.querySelectorAll('.tg-lbl[data-tab]'));
+      if (!tabs.des.panel || !tabs.com.panel || !tabs.beb.panel || buttons.length < 3) return false;
+
+      const setActiveTab = (key) => {
+        Object.entries(tabs).forEach(([name, { input, panel }]) => {
+          if (input) input.checked = name === key;
+          if (panel) panel.style.display = name === key ? 'block' : 'none';
+        });
+        buttons.forEach((button) => {
+          button.classList.toggle('tg-active', button.dataset.tab === key);
+        });
+      };
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          setActiveTab(button.dataset.tab);
+        });
+      });
+
+      setActiveTab('des');
+      return true;
+    };
+
+    const whenReady = (fn) => {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', fn);
+      } else {
+        fn();
+      }
+    };
+
+    whenReady(() => {
+      if (!initTabs()) {
+        const observer = new MutationObserver(() => {
+          if (initTabs()) observer.disconnect();
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      }
+    });
+  })();
 </script>
 </body>
 </html>
