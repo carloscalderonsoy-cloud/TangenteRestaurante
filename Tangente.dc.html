@@ -517,31 +517,34 @@ class Component extends DCLogic {
 </script>
 <script>
   (function () {
-    const buttons = Array.from(document.querySelectorAll('.tg-lbl[data-tab]'));
-    const panels = {
-      des: document.querySelector('.tg-panel-des'),
-      com: document.querySelector('.tg-panel-com'),
-      beb: document.querySelector('.tg-panel-beb'),
-    };
-
-    if (buttons.length < 3 || !panels.des || !panels.com || !panels.beb) return;
+    const menu = document.getElementById('menu');
+    if (!menu) return;
+    const tabSelector = '.tg-lbl[data-tab]';
+    const panelNames = ['des', 'com', 'beb'];
 
     const setActive = (key) => {
+      const buttons = menu.querySelectorAll(tabSelector);
       buttons.forEach((button) => {
         button.classList.toggle('tg-active', button.dataset.tab === key);
       });
-      Object.entries(panels).forEach(([name, panel]) => {
-        panel.classList.toggle('tg-active', name === key);
+      panelNames.forEach((name) => {
+        const panel = menu.querySelector(`.tg-panel-${name}`);
+        if (panel) panel.classList.toggle('tg-active', name === key);
       });
     };
 
-    buttons.forEach((button) => {
-      button.addEventListener('click', () => {
-        setActive(button.dataset.tab);
-      });
+    menu.addEventListener('click', (event) => {
+      const button = event.target.closest(tabSelector);
+      if (!button) return;
+      event.preventDefault();
+      setActive(button.dataset.tab);
     });
 
-    setActive('des');
+    if (document.readyState !== 'loading') {
+      setActive('des');
+    } else {
+      document.addEventListener('DOMContentLoaded', () => setActive('des'));
+    }
   })();
 </script>
 </body>
