@@ -148,9 +148,9 @@
 
       <!-- Tabs nav — labels conectados a los radio inputs -->
       <div style="border-bottom:1.5px solid rgba(31,29,27,.12);margin-bottom:clamp(36px,6vh,56px);overflow-x:auto;">
-        <button type="button" class="tg-lbl tg-active" data-tab="des">Desayunos</button>
-        <button type="button" class="tg-lbl" data-tab="com">Comida &amp; Cena</button>
-        <button type="button" class="tg-lbl" data-tab="beb">Bebidas</button>
+        <button type="button" class="tg-lbl tg-active" data-tab="des" onclick="tangenteTab('des')">Desayunos</button>
+        <button type="button" class="tg-lbl" data-tab="com" onclick="tangenteTab('com')">Comida &amp; Cena</button>
+        <button type="button" class="tg-lbl" data-tab="beb" onclick="tangenteTab('beb')">Bebidas</button>
       </div>
 
       <!-- DESAYUNOS panel -->
@@ -516,36 +516,28 @@ class Component extends DCLogic {
 }
 </script>
 <script>
-  (function () {
+  function tangenteTab(key) {
     const menu = document.getElementById('menu');
     if (!menu) return;
-    const tabSelector = '.tg-lbl[data-tab]';
-    const panelNames = ['des', 'com', 'beb'];
-
-    const setActive = (key) => {
-      const buttons = menu.querySelectorAll(tabSelector);
-      buttons.forEach((button) => {
-        button.classList.toggle('tg-active', button.dataset.tab === key);
-      });
-      panelNames.forEach((name) => {
-        const panel = menu.querySelector(`.tg-panel-${name}`);
-        if (panel) panel.classList.toggle('tg-active', name === key);
-      });
+    const buttons = Array.from(menu.querySelectorAll('.tg-lbl[data-tab]'));
+    const panels = {
+      des: menu.querySelector('.tg-panel-des'),
+      com: menu.querySelector('.tg-panel-com'),
+      beb: menu.querySelector('.tg-panel-beb'),
     };
-
-    menu.addEventListener('click', (event) => {
-      const button = event.target.closest(tabSelector);
-      if (!button) return;
-      event.preventDefault();
-      setActive(button.dataset.tab);
+    buttons.forEach((button) => {
+      button.classList.toggle('tg-active', button.dataset.tab === key);
     });
+    Object.entries(panels).forEach(([name, panel]) => {
+      if (panel) panel.classList.toggle('tg-active', name === key);
+    });
+  }
 
-    if (document.readyState !== 'loading') {
-      setActive('des');
-    } else {
-      document.addEventListener('DOMContentLoaded', () => setActive('des'));
-    }
-  })();
+  if (document.readyState !== 'loading') {
+    tangenteTab('des');
+  } else {
+    document.addEventListener('DOMContentLoaded', () => tangenteTab('des'));
+  }
 </script>
 </body>
 </html>
